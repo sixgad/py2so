@@ -24,7 +24,7 @@ optional arguments:
 
 **举例**
 
-编译当个文件，结果生成在result文件夹
+编译单个文件，结果默认生成在result文件夹
 
 > python py2so.py -f example/proj2/tool.py -r
 
