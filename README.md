@@ -9,7 +9,7 @@ linux下将python代码编译为so文件，实现了“加密”保护源代码�
 
 **查看帮助**
 
-> python38 py2so.py -h
+> python py2so.py -h
 
 ```shell
 py2so use help
