@@ -173,16 +173,16 @@ def clear_tmps():
 
 
 def pyencrypt(files):
-    extentions = []
+    extensions = []
     print(files)
     for full_filename in files:
         filename = full_filename[:-3].replace(os.path.sep, '.')
-        extention = Extension(filename, [full_filename])
-        extention.cython_c_in_temp = True
-        extentions.append(extention)
+        extension = Extension(filename, [full_filename])
+        extension.cython_c_in_temp = True
+        extensions.append(extension)
     setup(
         script_args=["build_ext"],
-        ext_modules=cythonize(extentions, quiet=False, language_level=3, nthreads=1, build_dir="tmp_build"),
+        ext_modules=cythonize(extensions, quiet=False, language_level=3, nthreads=1, build_dir="tmp_build"),
     )
 
 
