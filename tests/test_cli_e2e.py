@@ -78,6 +78,28 @@ def test_project_flow_without_remove_keeps_build_dirs(tmp_path, monkeypatch):
     assert (tmp_path / "result" / "proj" / "main.so").exists()
 
 
+def test_absolute_directory_end_to_end(tmp_path, monkeypatch):
+    """回归: -d 绝对路径不得在装配阶段抛 SameFileError，产物按镜像目录落位"""
+    make_project(tmp_path / "proj")
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(cli.platform, "system", lambda: "Linux")
+
+    # 绝对路径的模块命名依赖 POSIX 语义，真实编译仅在 Linux 运行，
+    # 此处只验证非编译文件装配不再与源文件相撞
+    monkeypatch.setattr(compiler, "pyencrypt", lambda files: os.makedirs("tmp_build", exist_ok=True))
+
+    abs_proj = str(tmp_path / "proj")
+    rc = cli.main(["-d", abs_proj, "-i", "ignored/", "-r"])
+    assert rc == 0
+
+    mirror = "." + os.path.splitdrive(abs_proj)[1].lstrip(os.path.sep)
+    result = tmp_path / "result" / mirror
+    assert (result / "data.txt").exists()
+    assert (result / "pkg" / "__init__.py").exists()
+    assert (result / "ignored" / "ig.py").exists()
+    assert not (tmp_path / "tmp_build").exists()
+
+
 def test_bad_file_arg_exits_2(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(cli.platform, "system", lambda: "Linux")
     rc = cli.main(["-f", "readme.txt"])

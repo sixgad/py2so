@@ -34,9 +34,13 @@ def gen_project(opts, will_compile_files):
     # 非编译文件拷贝至生成库路径
     not_compile_files = get_not_compile_files(opts, will_compile_files)
     for not_compile_file in not_compile_files:
-        dest_path = os.path.join('result', not_compile_file)
-        filepath, filename = os.path.split(dest_path)
-        make_dir(filepath)
+        src_dir, file_name = os.path.split(not_compile_file)
+        if os.path.isabs(not_compile_file):
+            # 绝对路径与编译产物的模块命名对齐：根/盘符转为一个点目录段，
+            # 避免 os.path.join 被绝对路径重置后拷贝到源文件自身
+            src_dir = '.' + os.path.splitdrive(src_dir)[1].lstrip(os.path.sep)
+        dest_path = os.path.join('result', src_dir, file_name)
+        make_dir(os.path.dirname(dest_path))
         shutil.copyfile(not_compile_file, dest_path)
 
     if opts.remove:

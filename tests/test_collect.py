@@ -60,6 +60,15 @@ def test_init_py_excluded_from_compile(tmp_path):
     assert os.path.join("pkg", "mod.py") in result
 
 
+def test_ignore_separators_only_raises(tmp_path):
+    """回归: 只含路径分隔符的 ignore 条目不得静默排除全部文件"""
+    make_tree(tmp_path)
+    for bad in ("/", "main.py," + os.path.sep):
+        opts = parse(["-d", str(tmp_path), "-i", bad])
+        with pytest.raises(collect.Py2soError):
+            collect.get_encfile_list(opts)
+
+
 def test_directory_not_exist_raises(tmp_path):
     opts = parse(["-d", str(tmp_path / "nope")])
     with pytest.raises(collect.Py2soError):
