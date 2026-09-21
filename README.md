@@ -36,6 +36,18 @@ optional arguments:
 
 > py2so -d example/proj1/ -i run.py -r
 
+**产物硬化（0.3.0+）**
+
+默认编译参数已做逆向硬化：产物 `.so` 剥离符号与调试信息（链接 `-s`、编译 `-g0`、优化 `-O3`），不嵌入函数签名（`binding=False`），docstring 不编入二进制。
+
+代价：被保护程序上 `__doc__`、`help()`、`inspect.signature` 不再可用——这些自省信息正是逆向者的路标。
+
+Linux 上可自查产物硬化效果：
+
+> file result/example/proj2/tool*.so   # 期望含 "stripped" 而非 "not stripped"
+>
+> nm result/example/proj2/tool*.so     # 期望输出 "no symbols"
+
 **开发者（uv 管理）**
 
 ```shell

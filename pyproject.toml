@@ -1,6 +1,6 @@
 [project]
 name = "py2so"
-version = "0.2.0"
+version = "0.3.0"
 description = "将 Python 代码编译为 so 文件以保护源码，并输出可直接部署的工程目录"
 readme = "README.md"
 license = "MIT"
