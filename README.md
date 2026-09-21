@@ -1,15 +1,19 @@
 # py2so
 linux下将python代码编译为so文件，实现了“加密”保护源代码的需求，同时带来了性能提升。
 
+要求 Python 3.10 及以上版本；编译仅支持 Linux（Windows 下可使用 pyinstaller 打包 exe）。
+
 **安装**
 
 > git clone git@github.com:sixgad/py2so.git
 >
-> pip install -r requirements.txt
+> cd py2so
+>
+> pip install .
 
 **查看帮助**
 
-> python py2so.py -h
+> py2so -h
 
 ```shell
 py2so use help
@@ -26,12 +30,18 @@ optional arguments:
 
 编译单个文件，结果默认生成在result文件夹
 
-> python py2so.py -f example/proj2/tool.py -r
+> py2so -f example/proj2/tool.py -r
 
 编译整个python项目，忽略主文件run.py
 
-> python py2so.py -d example/proj1/ -i run.py -r
+> py2so -d example/proj1/ -i run.py -r
 
+**开发者（uv 管理）**
 
+```shell
+uv sync          # 安装依赖与开发环境
+uv run pytest    # 运行测试
+uv build         # 构建 wheel 到 dist/
+```
 
 具体应用，见博客：https://paker.net.cn/article?id=34
