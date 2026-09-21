@@ -101,9 +101,9 @@ def collect_compile_files(directory, ignore=""):
             continue
         if path_assign[-1:] in ['/', '\\']:  # 末尾是路径分隔符则视为目录
             assign_dir = path_assign.strip('/\\')
-            if not assign_dir:
+            if not assign_dir or os.path.normpath(assign_dir) == '.':
                 raise Py2soError(
-                    "Invalid ignore entry '%s': a directory entry must name a path, not only separators" % path_assign)
+                    "Invalid ignore entry '%s': a directory entry must name a path below the project" % path_assign)
             tmp_dir = os.path.join(directory, assign_dir)
             for file in getfiles_inpath(dir_path=tmp_dir,
                                         includeSubfolder=True,

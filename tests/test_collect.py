@@ -60,13 +60,24 @@ def test_init_py_excluded_from_compile(tmp_path):
     assert os.path.join("pkg", "mod.py") in result
 
 
-def test_ignore_separators_only_raises(tmp_path):
-    """回归: 只含路径分隔符的 ignore 条目不得静默排除全部文件"""
+@pytest.mark.parametrize("bad", ["/", "\\", "./", "." + os.path.sep,
+                                  "main.py," + os.path.sep])
+def test_ignore_root_self_reference_raises(tmp_path, bad):
+    """回归: 纯分隔符或根自指的 ignore 条目不得静默排除全部文件"""
     make_tree(tmp_path)
-    for bad in ("/", "main.py," + os.path.sep):
-        opts = parse(["-d", str(tmp_path), "-i", bad])
-        with pytest.raises(collect.Py2soError):
-            collect.get_encfile_list(opts)
+    opts = parse(["-d", str(tmp_path), "-i", bad])
+    with pytest.raises(collect.Py2soError):
+        collect.get_encfile_list(opts)
+
+
+def test_ignore_dir_with_dot_prefix_excludes_normally(tmp_path):
+    """合法用法不被守卫误伤: ./ 前缀的普通目录条目正常排除"""
+    make_tree(tmp_path)
+    opts = parse(["-d", str(tmp_path), "-i", "./sub/ignored_dir/"])
+    result = relpaths(collect.get_encfile_list(opts), str(tmp_path))
+    assert result == sorted(["main.py",
+                             os.path.join("pkg", "mod.py"),
+                             os.path.join("sub", "kept.py")])
 
 
 def test_directory_not_exist_raises(tmp_path):
